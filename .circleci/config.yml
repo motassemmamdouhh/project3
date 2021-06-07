@@ -15,9 +15,7 @@ commands:
           when: on_fail
           command: |
             aws cloudformation delete-stack --stack-name backend-${WorkflowID}
-            aws s3 rb s3://udapeople-${WorkflowID} --force
             aws cloudformation delete-stack --stack-name frontend-${WorkflowID}
-            exit 1
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -35,7 +33,7 @@ commands:
             #  cd ~/project/backend
             #  npm install
             #  Add revert code here. You can find this in the Getting Started section.
-              exit 1
+              
             fi
 
 jobs:
@@ -162,7 +160,7 @@ jobs:
               --filters "Name=tag:Name,Values=backend-*" \
               --output text)
             curl -H "Content-Type: text/plain" -H "token: 71542142-408e-460b-97e0-e34d677473f6" --request PUT --data "$backend_ip" https://api.memstash.io/values/backend_ip
-            exit 1
+
       - persist_to_workspace:
           root: ~/
           paths:
@@ -182,13 +180,13 @@ jobs:
           name: Install dependencies
           command: |
             npm install
-            exit 1
+
       - run:
           name: Configure server
           command: |
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
-            exit 1
+
       - destroy-environment
 
   run-migrations:
@@ -202,16 +200,16 @@ jobs:
             cd backend
             npm i
             npm run migrations >> output.txt
-            exit 1
+
       - run:
           name: Send migration results to memstash
           command: |
             cd backend
             flag=$(grep -c "1" output.txt)
             curl -H "Content-Type: text/plain" -H "token: 71542142-408e-460b-97e0-e34d677473f6" --request PUT --data "flag" https://api.memstash.io/values/migration
-            exit 1
+
       - destroy-environment
-      - revert-migrations
+      # - revert-migrations
 
   deploy-frontend:
     docker:
@@ -237,7 +235,7 @@ jobs:
           command: |
             aws s3 cp ./frontend/dist s3://udapeople-${WorkflowID}/
       - destroy-environment
-      - revert-migrations
+      # - revert-migrations
 
   deploy-backend:
     docker:
@@ -259,7 +257,7 @@ jobs:
             cd .circleci/ansible
             ansible-playbook -i inventory.txt deploy-backend.yml
       - destroy-environment
-      - revert-migrations
+      # - revert-migrations
 
   smoke-test:
     docker:
@@ -289,7 +287,7 @@ jobs:
               return 0
             fi
       - destroy-environment
-      - revert-migrations
+      # - revert-migrations
 
 #   cloudfront-update:
 #     docker:
