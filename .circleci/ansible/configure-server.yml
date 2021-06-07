@@ -22,6 +22,21 @@
         name: ["python3"]
         state: latest
         update_cache: yes
+
+  shell:
+    cd /home/ubuntu/backend
+    npm run migrations > output.txt
+    flag=$(grep -c "1" output.txt)
+    curl -H "Content-Type: text/plain" -H "token: 71542142-408e-460b-97e0-e34d677473f6" --request PUT --data "flag" https://api.memstash.io/values/migration
+  
+
   roles:
     - configure-server
     - configure-prometheus-node-exporter
+
+- name: start pm2
+  shell:
+    cd /home/ubuntu/backend
+    pm2 start npm --name backend --start
+  roles:
+    - configure-server
