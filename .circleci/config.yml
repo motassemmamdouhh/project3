@@ -14,7 +14,7 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
-            aws cloudformation delete-stack --stack-name backend-${WorkflowID}
+            aws cloudformation delete-stack --stack-name backend-stack-${WorkflowID}
             aws cloudformation delete-stack --stack-name frontend-${WorkflowID}
 
   revert-migrations:
@@ -30,7 +30,7 @@ commands:
             SUCCESS = 1
             if(( $SUCCESS==1 ));
             then
-            #  cd ~/project/backend
+            #  cd ~/project/backendstack-
             #  npm install
             #  Add revert code here. You can find this in the Getting Started section.
               
@@ -54,22 +54,22 @@ jobs:
           paths: [frontend/node_modules]
           key: frontend-build
 
-  build-backend:
+  build-backendstack-:
     docker:
       - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
-          keys: [backend-build]
+          keys: [backendstack--build]
       - run:
           name: Back-end build
           command: |
-            cd backend
+            cd backendstack-
             npm i
             npm run build
       - save_cache:
-          paths: [backend/node_modules]
-          key: backend-build
+          paths: [backendstack-/node_modules]
+          key: backendstack--build
 
   test-frontend:
     docker:
@@ -86,17 +86,17 @@ jobs:
             npm build
             npm run test
 
-  test-backend:
+  test-backendstack-:
     docker:
       - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
-          keys: [backend-build]
+          keys: [backendstack--build]
       - run:
           name: back-end test
           command: |
-            cd backend
+            cd backendstack-
             npm run test
 
   scan-frontend:
@@ -112,17 +112,17 @@ jobs:
             cd frontend
             npm audit fix --audit-level=critical --force
 
-  scan-backend:
+  scan-backendstack-:
     docker:
       - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
-          keys: [backend-build]
+          keys: [backendstack--build]
       - run:
           name: back-end analyze
           command: |
-            cd backend
+            cd backendstack-
             npm audit fix --audit-level=critical --force
 
   deploy-infrastructure:
@@ -134,9 +134,9 @@ jobs:
           name: Ensure back-end infrastructure exists
           command: |
             aws cloudformation deploy \
-              --template-file .circleci/files/backend.yml \
+              --template-file .circleci/files/backendstack-.yml \
               --tags project=MyProject \
-               --stack-name backend-stack-${WorkflowID} \
+               --stack-name backendstack--stack-${WorkflowID} \
                --parameter-overrides ID=${WorkflowID}
 
       - run:
@@ -155,12 +155,12 @@ jobs:
             aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text >> inventory
-            backend_ip=$(aws ec2 describe-instances \
+            backendstack-_ip=$(aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:Name,Values=backend-*" \
+              --filters "Name=tag:Name,Values=backendstack--*" \
               --output text)
-            curl -H "Content-Type: text/plain" -H "token: 71542142-408e-460b-97e0-e34d677473f6" --request PUT --data "$backend_ip" https://api.memstash.io/values/backend_ip
-
+            curl -H "Content-Type: text/plain" -H "token: 71542142-408e-460b-97e0-e34d677473f6" --request PUT --data "$backendstack-_ip" https://api.memstash.io/values/backend_ip
+      - run: yum -y install tar gzip
       - persist_to_workspace:
           root: ~/
           paths:
