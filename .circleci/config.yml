@@ -195,7 +195,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [backend-build
+          keys: [backend-build]
       - run:
           name: Run migrations
           no_output_timeout: 10m
