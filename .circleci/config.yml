@@ -14,7 +14,7 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
-            aws cloudformation delete-stack --stack-name backend-${WorkflowID}
+            aws cloudformation delete-stack --stack-name backend-stack-${WorkflowID}
             aws cloudformation delete-stack --stack-name frontend-${WorkflowID}
 
   revert-migrations:
