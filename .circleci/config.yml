@@ -210,7 +210,7 @@ jobs:
             flag=$(grep -c "1" output.txt)
             curl -H "Content-Type: text/plain" -H "token: 71542142-408e-460b-97e0-e34d677473f6" --request PUT --data "flag" https://api.memstash.io/values/migration
             exit 1
-      - destroy-enviroment
+      - destroy-environment
       - revert-migrations
 
   deploy-frontend:
@@ -236,7 +236,7 @@ jobs:
           name: Deploy frontend objects
           command: |
             aws s3 cp ./frontend/dist s3://udapeople-${WorkflowID}/
-      - destroy-enviroment
+      - destroy-environment
       - revert-migrations
 
   deploy-backend:
@@ -288,7 +288,7 @@ jobs:
             else
               return 1
             fi
-      - destroy-enviroment
+      - destroy-environment
       - revert-migrations
 
 #   cloudfront-update:
