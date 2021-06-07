@@ -179,7 +179,8 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            npm install
+            apk add --update ansible jq curl
+            pip install awscli
 
       - run:
           name: Configure server
@@ -225,6 +226,7 @@ jobs:
           name: Get backend url
           command: |
             cd frontend
+            yum -y install tar gzip
             BACKEND_IP=curl -H "token: 71542142-408e-460b-97e0-e34d677473f6" --request GET https://api.memstash.io/values/backend_ip
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
@@ -239,7 +241,7 @@ jobs:
 
   deploy-backend:
     docker:
-      - image: ansible/ansible
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
       - add_ssh_keys:
@@ -250,7 +252,8 @@ jobs:
           name: Install dependencies
           command: |
             cd backend
-            npm i
+            apk add --update ansible jq curl
+            pip install awscli
       - run:
           name: Deploy backend
           command: |
