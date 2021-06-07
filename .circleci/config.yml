@@ -26,13 +26,12 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
-            # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS = 1
+            SUCCESS=`curl -H "token: 71542142-408e-460b-97e0-e34d677473f6" --request GET https://api.memstash.io/values/migration`
             if(( $SUCCESS==1 ));
             then
-            #  cd ~/project/backend
-            #  npm install
-            #  Add revert code here. You can find this in the Getting Started section.
+              cd backend
+              npm install
+              npm run migrations:revert
               
             fi
 
@@ -199,7 +198,10 @@ jobs:
           name: Run migrations
           command: |
             cd backend
+            sudo apt install python-pip jq curl
+            sudo pip install awscli
             npm i
+            npm audit fix --audit-level=critical 
             npm run migrations >> output.txt
 
       - run:
@@ -210,7 +212,7 @@ jobs:
             curl -H "Content-Type: text/plain" -H "token: 71542142-408e-460b-97e0-e34d677473f6" --request PUT --data "flag" https://api.memstash.io/values/migration
 
       - destroy-environment
-      # - revert-migrations
+      - revert-migrations
 
   deploy-frontend:
     docker:
@@ -237,7 +239,7 @@ jobs:
           command: |
             aws s3 cp ./frontend/dist s3://udapeople-${WorkflowID}/
       - destroy-environment
-      # - revert-migrations
+      - revert-migrations
 
   deploy-backend:
     docker:
@@ -260,7 +262,7 @@ jobs:
             cd .circleci/ansible
             ansible-playbook -i inventory.txt deploy-backend.yml
       - destroy-environment
-      # - revert-migrations
+      - revert-migrations
 
   smoke-test:
     docker:
@@ -290,7 +292,7 @@ jobs:
               return 0
             fi
       - destroy-environment
-      # - revert-migrations
+      - revert-migrations
 
 #   cloudfront-update:
 #     docker:
