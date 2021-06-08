@@ -254,7 +254,7 @@ jobs:
           command: |
             sudo apt install python-pip jq curl
             sudo pip install awscli 
-            aws s3 cp ./frontend/dist s3://udapeople-kk1j667dhjjqmz437/
+            aws s3 cp ./frontend/dist s3://udapeople-kk1j667dhjjqmz437/ --recursive
       - destroy-environment
       - revert-migrations
 
