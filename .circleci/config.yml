@@ -242,7 +242,8 @@ jobs:
             cd frontend
             sudo apt install python-pip jq curl
             sudo pip install awscli 
-            BACKEND_IP=curl -H "token: 71542142-408e-460b-97e0-e34d677473f6" --request GET https://api.memstash.io/values/backend_ip
+            sudo apt install curl
+            BACKEND_IP=curl -h "token: 71542142-408e-460b-97e0-e34d677473f6" --request GET https://api.memstash.io/values/backend_ip
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
             npm i
