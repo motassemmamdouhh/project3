@@ -5,7 +5,12 @@ services:
     image: "postgres"
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=glee
+      - POSTGRES_PASSWORD=project123
+      - POSTGRES_DB=gleeNODE_ENV=production
+      - TYPEORM_HOST=udacity.cxdxjwyflax1.us-east-1.rds.amazonaws.com
+      - TYPEORM_PORT=5432
+      - TYPEORM_USERNAME=postgres
+      - TYPEORM_PASSWORD=project123
+      - TYPEORM_DATABASE=udacity
     ports:
       - "5532:5432"
