@@ -283,7 +283,7 @@ jobs:
 
   smoke-test:
     docker:
-      - image: alpine/alpine
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
       - run:
@@ -295,7 +295,7 @@ jobs:
       - run:
           name: Get backend url and test
           command: |
-            backend_url=curl -H "token: 71542142-408e-460b-97e0-e34d677473f6" --request GET https://api.memstash.io/values/backend_ip
+            backend_url=`curl -H "token: 71542142-408e-460b-97e0-e34d677473f6" --request GET https://api.memstash.io/values/backend_ip`
             curl "http://${backend_url}:3030/api/status"
 
       - run:
