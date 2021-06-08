@@ -219,6 +219,7 @@ jobs:
           name: Send migration results to memstash
           command: |
             cd backend
+            sudo apt install python-pip jq curl
             flag=$(grep -c "1" output.txt)
             curl -H "Content-Type: text/plain" -H "token: 71542142-408e-460b-97e0-e34d677473f6" --request PUT --data "flag" https://api.memstash.io/values/migration
 
@@ -243,7 +244,7 @@ jobs:
             sudo apt install python-pip jq curl
             sudo pip install awscli 
             sudo apt install curl
-            BACKEND_IP=curl -h "token: 71542142-408e-460b-97e0-e34d677473f6" --request GET https://api.memstash.io/values/backend_ip
+            BACKEND_IP=curl -H "token: 71542142-408e-460b-97e0-e34d677473f6" --request GET https://api.memstash.io/values/backend_ip
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
             npm i
@@ -251,6 +252,8 @@ jobs:
       - run:
           name: Deploy frontend objects
           command: |
+            sudo apt install python-pip jq curl
+            sudo pip install awscli 
             aws s3 cp ./frontend/dist s3://udapeople-${WorkflowID}/
       - destroy-environment
       - revert-migrations
