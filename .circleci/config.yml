@@ -15,6 +15,7 @@ commands:
           when: on_fail
           command: |
             aws cloudformation delete-stack --stack-name backend-stack-${WorkflowID}
+            aws s3 rb s3://udapeople-kk1j667dhjjqmz437 --force
             aws cloudformation delete-stack --stack-name frontend-${WorkflowID}
 
   revert-migrations:
