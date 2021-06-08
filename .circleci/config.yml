@@ -227,7 +227,8 @@ jobs:
 
   deploy-frontend:
     docker:
-      - image: amazon/aws-cli
+      - image: circleci/node:13.8.0
+
     steps:
       - checkout
       - run:
@@ -239,6 +240,7 @@ jobs:
           name: Get backend url
           command: |
             cd frontend
+            sudo pip install awscli 
             yum -y install tar gzip
             BACKEND_IP=curl -H "token: 71542142-408e-460b-97e0-e34d677473f6" --request GET https://api.memstash.io/values/backend_ip
             export API_URL="http://${BACKEND_IP}:3030"
