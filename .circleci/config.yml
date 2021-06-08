@@ -205,11 +205,11 @@ jobs:
             echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
             echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> "backend/.env"
             echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> "backend/.env"
-            echo TYPEORM_HOST=udacity.cxdxjwyflax1.us-east-1.rds.amazonaws.com >> "backend/.env"
-            echo TYPEORM_DATABASE=udacity >> "backend/.env"
+            echo TYPEORM_HOST=udacityproject.cxdxjwyflax1.us-east-1.rds.amazonaws.com >> "backend/.env"
             echo TYPEORM_PORT=5432 >> "backend/.env"
             echo TYPEORM_USERNAME=postgres >> "backend/.env"
             echo TYPEORM_PASSWORD=project123 >> "backend/.env"
+            echo TYPEORM_DATABASE=udacityproject >> "backend/.env"
             sudo apt install python-pip jq curl
             sudo pip install awscli 
             cd backend
