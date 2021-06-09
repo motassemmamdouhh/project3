@@ -289,8 +289,7 @@ jobs:
       - checkout
       - run:
           name: install depends
-          command:
-          sudo apt install curl
+          command: sudo apt install curl
       - run:
           name: Frontend smoke test.
           command: |
@@ -320,11 +319,6 @@ jobs:
             curl "http://${backend_url}:3030/api/status"
 
       # - revert-migrations
-
-
-
-
-
 
 #   cloudfront-update:
 #     docker:
