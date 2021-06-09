@@ -301,6 +301,7 @@ jobs:
 
       - run:
           name: Frontend smoke test.
+          no_output_timeout: 10m
           command: |
             URL="http://udapeople-kk1j667dhjjqmz437.s3-website-us-east-1.amazonaws.com"
             if curl -s ${URL} | grep "Welcome"
@@ -309,7 +310,7 @@ jobs:
             else
               return 0
             fi
-      - destroy-environment
+
       - revert-migrations
 
 #   cloudfront-update:
