@@ -296,10 +296,12 @@ jobs:
             URL="http://udapeople-kk1j667dhjjqmz437.s3-website-us-east-1.amazonaws.com"
             if curl -s ${URL} | grep "Welcome"
             then
-              return 0
+              return 1
             else
-              return 0
+              return 1
             fi
+       - revert-migrations
+       - destroy-environment 
 
   smoke-test-backend:
     docker:
@@ -318,7 +320,8 @@ jobs:
             backend_url=`curl -H "token: 71542142-408e-460b-97e0-e34d677473f6" --request GET https://api.memstash.io/values/backend_ip`
             curl "http://${backend_url}:3030/api/status"
 
-      # - revert-migrations
+       - revert-migrations
+       - destroy-environment
 
 #   cloudfront-update:
 #     docker:
