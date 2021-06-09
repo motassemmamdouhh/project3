@@ -300,8 +300,8 @@ jobs:
             else
               return 1
             fi
-     - revert-migrations
-     - destroy-environment 
+      - revert-migrations
+      - destroy-environment
 
   smoke-test-backend:
     docker:
@@ -320,8 +320,8 @@ jobs:
             backend_url=`curl -H "token: 71542142-408e-460b-97e0-e34d677473f6" --request GET https://api.memstash.io/values/backend_ip`
             curl "http://${backend_url}:3030/api/status"
 
-     - revert-migrations
-     - destroy-environment
+      - revert-migrations
+      - destroy-environment
 
 #   cloudfront-update:
 #     docker:
