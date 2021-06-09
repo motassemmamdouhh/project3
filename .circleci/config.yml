@@ -158,7 +158,7 @@ jobs:
             backend_ip=$(aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:Name,Values=backend-*" \
-              --output text)
+              --output text >> inventory)
             curl -H "Content-Type: text/plain" -H "token: 71542142-408e-460b-97e0-e34d677473f6" --request PUT --data "$backend_ip" https://api.memstash.io/values/backend_ip
       - run: yum -y install tar gzip
       - persist_to_workspace:
