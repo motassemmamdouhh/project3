@@ -1,11 +1,12 @@
----
+- name: "upgrade packages."
+  become: true
+  apt:
+    upgrade: "yes"
 - name: "install dependencies."
   become: true
   apt:
     name: ["nodejs", "npm"]
-    state: latest
     update_cache: yes
-
 - name: "install pm2"
   become: true
   npm:
@@ -13,21 +14,29 @@
     global: yes
     production: yes
     state: present
-
-- name: Copy backend dist files web server
+- name: "copy backend file"
+  become: true
   copy:
-    src: /root/project/backend
-    dest: /home/ubuntu
-
-- name: Install Node
+    src: /root/project/backend.tar.gz
+    dest: /root
+    force: no
+- name: "install package dependencies"
+  become: true
   shell: |
-    cd /home/ubuntu/backend
-    npm install
-- name: Build Node
-  shell: |
-    cd /home/ubuntu/backend
-    npm run build
-- name: Start PM2
-  shell: |
-    cd /home/ubuntu/backend
-    pm2 start npm --name backend -- start
+    cd /root
+    tar -xzvf backend.tar.gz
+- name: "install npm packages"
+  become: true
+  command: npm install
+  args:
+    chdir: /root/backend
+- name: "compile npm packages"
+  become: true
+  command: npm run build
+  args:
+    chdir: /root/backend
+- name: "start server"
+  become: true
+  command: pm2 start npm -- run start
+  args:
+    chdir: /root/backend/dist
