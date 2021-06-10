@@ -14,9 +14,9 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
-            aws cloudformation delete-stack --stack-name backend-stack-${WorkflowID}
-            aws s3 rb s3://udapeople-${WorkflowID} --force
-            aws cloudformation delete-stack --stack-name frontend-${WorkflowID}
+            aws cloudformation delete-stack --stack-name backend-stack-${CIRCLE_WORKFLOW_ID:0:7}
+            aws s3 rb s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --force
+            aws cloudformation delete-stack --stack-name frontend-${CIRCLE_WORKFLOW_ID:0:7}
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -136,8 +136,8 @@ jobs:
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
               --tags project=MyProject \
-               --stack-name backend-stack-${WorkflowID} \
-               --parameter-overrides ID=${WorkflowID}
+               --stack-name backend-stack-${CIRCLE_WORKFLOW_ID:0:7} \
+               --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:7}
 
       - run:
           name: Ensure front-end infrastructure exist
@@ -145,8 +145,8 @@ jobs:
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
               --tags project=MyProject\
-               --stack-name frontend-${WorkflowID} \
-               --parameter-overrides ID=${WorkflowID}
+               --stack-name frontend-${CIRCLE_WORKFLOW_ID:0:7} \
+               --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:7}
 
       - run:
           name: Add back-end ip to ansible inventory
@@ -255,7 +255,7 @@ jobs:
           command: |
             sudo apt install python-pip jq curl
             sudo pip install awscli 
-            aws s3 cp ./frontend/dist s3://udapeople-${WorkflowID}/ --recursive
+            aws s3 cp ./frontend/dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}/ --recursive
       - destroy-environment
       - revert-migrations
 
@@ -298,7 +298,7 @@ jobs:
       - run:
           name: Frontend smoke test.
           command: |
-            URL="http://udapeople-${WorkflowID}.s3-website-us-east-1.amazonaws.com"
+            URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-east-1.amazonaws.com"
             if curl -s ${URL} | grep "Welcome"
             then
               exit 0
@@ -353,9 +353,9 @@ jobs:
               echo Delete old stacks/resources
             if [[ "${STACKS[@]}" =~ "${OldWorkflowId}" ]]
             then              
-              aws cloudformation delete-stack --stack-name backend-stack-${WorkflowID}
+              aws cloudformation delete-stack --stack-name backend-stack-${CIRCLE_WORKFLOW_ID:0:7}
               aws s3 rb s3://udapeople-kk1j667dhjjqmz437 --force
-              aws cloudformation delete-stack --stack-name frontend-${WorkflowID}
+              aws cloudformation delete-stack --stack-name frontend-${CIRCLE_WORKFLOW_ID:0:7}
             fi
       - revert-migrations
       - destroy-environment
