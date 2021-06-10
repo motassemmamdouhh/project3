@@ -328,20 +328,38 @@ jobs:
       - revert-migrations
       - destroy-environment
 
-#   cloudfront-update:
-#     docker:
-#       # Docker image here that supports AWS CLI
-#     steps:
-#       # Checkout code from git
-#       - run:
-#           name: Install dependencies
-#           command: |
-#             # your code here
-#       - run:
-#           name: Update cloudfront distribution
-#           command: |
-#             # your code here
-#       # Here's where you will add some code to rollback on failure
+  cloudfront-update:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            # your code here
+      - run:
+          name: Update cloudfront distribution
+          command: |
+            OldWorkflowId=$(aws cloudformation list-exports --query "Exports[?Name=='WorkflowID'].Value" --output text)
+            STACKS=$(aws cloudformation list-stacks --query "StackSummaries[*].StackName" --stack-status-filter CREATE_COMPLETE --output text)
+            echo OldWorkflowId: ${OldWorkflowId}
+            echo STACKS: ${STACKS}
+            echo Update CloudFront                  
+            aws cloudformation deploy \
+              --stack-name circleci-stack \
+              --template-file .circleci/files/cloudfront.yml \
+              --region us-west-2 \
+              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID}"
+              echo Delete old stacks/resources
+            if [[ "${STACKS[@]}" =~ "${OldWorkflowId}" ]]
+            then              
+              aws cloudformation delete-stack --stack-name backend-stack-${WorkflowID}
+              aws s3 rb s3://udapeople-kk1j667dhjjqmz437 --force
+              aws cloudformation delete-stack --stack-name frontend-${WorkflowID}
+            fi
+      - revert-migrations
+      - destroy-environment
+      # Here's where you will add some code to rollback on failure
 
 # cleanup:
 #     docker:
