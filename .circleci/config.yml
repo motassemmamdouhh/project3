@@ -299,7 +299,7 @@ jobs:
             URL="http://udapeople-kk1j667dhjjqmz437.s3-website-us-east-1.amazonaws.com"
             if curl -s ${URL} | grep "Welcome"
             then
-              exit 1
+              exit 0
             else
               exit 1
             fi
