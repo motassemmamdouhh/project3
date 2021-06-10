@@ -289,16 +289,19 @@ jobs:
       - checkout
       - run:
           name: install depends
-          command: sudo apt install curl
+          command: |
+            sudo apt install curl
+            sudo apt install python-pip jq curl
+            sudo pip install awscli
       - run:
           name: Frontend smoke test.
           command: |
             URL="http://udapeople-kk1j667dhjjqmz437.s3-website-us-east-1.amazonaws.com"
             if curl -s ${URL} | grep "Welcome"
             then
-              return 1
+              exit 1
             else
-              return 1
+              exit 1
             fi
       - revert-migrations
       - destroy-environment
