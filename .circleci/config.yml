@@ -2,7 +2,7 @@ version: 2.1
 parameters:
   WorkflowID:
     type: string
-    default: "kk1j667dhjjqmz437"
+    default: "${CIRCLE_WORKFLOW_ID:0:7}"
 
 commands:
   destroy-environment:
@@ -15,7 +15,7 @@ commands:
           when: on_fail
           command: |
             aws cloudformation delete-stack --stack-name backend-stack-${WorkflowID}
-            aws s3 rb s3://udapeople-kk1j667dhjjqmz437 --force
+            aws s3 rb s3://udapeople-${WorkflowID} --force
             aws cloudformation delete-stack --stack-name frontend-${WorkflowID}
 
   revert-migrations:
@@ -255,7 +255,7 @@ jobs:
           command: |
             sudo apt install python-pip jq curl
             sudo pip install awscli 
-            aws s3 cp ./frontend/dist s3://udapeople-kk1j667dhjjqmz437/ --recursive
+            aws s3 cp ./frontend/dist s3://udapeople-${WorkflowID}/ --recursive
       - destroy-environment
       - revert-migrations
 
@@ -298,7 +298,7 @@ jobs:
       - run:
           name: Frontend smoke test.
           command: |
-            URL="http://udapeople-kk1j667dhjjqmz437.s3-website-us-east-1.amazonaws.com"
+            URL="http://udapeople-${WorkflowID}.s3-website-us-east-1.amazonaws.com"
             if curl -s ${URL} | grep "Welcome"
             then
               exit 0
@@ -359,7 +359,6 @@ jobs:
             fi
       - revert-migrations
       - destroy-environment
-      # Here's where you will add some code to rollback on failure
 
 # cleanup:
 #     docker:
