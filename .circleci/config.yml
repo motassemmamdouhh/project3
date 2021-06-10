@@ -340,20 +340,20 @@ jobs:
       - run:
           name: Update cloudfront distribution
           command: |
-            OldWorkflowId=$(aws cloudformation list-exports --query "Exports[?Name=='WorkflowID'].Value" --output text)
-            STACKS=$(aws cloudformation list-stacks --query "StackSummaries[*].StackName" --stack-status-filter CREATE_COMPLETE --output text)
-            echo OldWorkflowId: ${OldWorkflowId}
-            echo STACKS: ${STACKS}
-            echo Update CloudFront                  
+            export OldWorkflowId=$(aws cloudformation \
+              list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+              --no-paginate --output text)   
+            export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+              --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
+            echo "Old workflow Id: ${OldWorkflowId} :end"  
             aws cloudformation deploy \
-              --stack-name circleci-stack \
               --template-file .circleci/files/cloudfront.yml \
-              --region us-east-1 \
-              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID}"
-              echo Delete old stacks/resources
+              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
+              --stack-name "cloudfront-${CIRCLE_WORKFLOW_ID:0:7}"  \
+              --tags project=udapeople &
             if [[ "${STACKS[@]}" =~ "${OldWorkflowId}" ]]
-            then              
-              aws cloudformation delete-stack --stack-name backend-stack-${CIRCLE_WORKFLOW_ID:0:7}
+            then
+              aws cloudformation delete-stack --stack-name backend-stack-${}
               aws s3 rb s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --force
               aws cloudformation delete-stack --stack-name frontend-${CIRCLE_WORKFLOW_ID:0:7}
             fi
