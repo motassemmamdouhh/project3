@@ -17,7 +17,7 @@
 - name: "copy backend file"
   become: true
   copy:
-    src: /root/project/backend.tar.gz
+    src: /code
     dest: /root
     force: no
 - name: "install package dependencies"
@@ -29,7 +29,7 @@
   become: true
   command: npm install
   args:
-    chdir: /root/backend
+    chdir: /root/code/backend/
 - name: "compile npm packages"
   become: true
   command: npm run build
@@ -39,4 +39,4 @@
   become: true
   command: pm2 start npm -- run start
   args:
-    chdir: /root/backend/dist
+    chdir: /root/code/backend/dist
