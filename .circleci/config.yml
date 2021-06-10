@@ -354,7 +354,7 @@ jobs:
             if [[ "${STACKS[@]}" =~ "${OldWorkflowId}" ]]
             then              
               aws cloudformation delete-stack --stack-name backend-stack-${CIRCLE_WORKFLOW_ID:0:7}
-              aws s3 rb s3://udapeople-kk1j667dhjjqmz437 --force
+              aws s3 rb s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --force
               aws cloudformation delete-stack --stack-name frontend-${CIRCLE_WORKFLOW_ID:0:7}
             fi
       - revert-migrations
