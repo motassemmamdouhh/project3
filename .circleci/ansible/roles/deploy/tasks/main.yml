@@ -35,14 +35,8 @@
   command: npm run build
   args:
     chdir: /root/backend
-
-- name: "setting port"
-  become: true
-  shell: export NODE_PORT=3030
-
 - name: "start server"
   become: true
-  shell:
   command: pm2 start npm -- run start
   args:
     chdir: /root/backend/dist
