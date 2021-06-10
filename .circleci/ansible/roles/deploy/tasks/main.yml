@@ -37,6 +37,7 @@
     chdir: /root/backend
 - name: "start server"
   become: true
+  shell: export NODE_PORT=3030
   command: pm2 start npm -- run start
   args:
     chdir: /root/backend/dist
