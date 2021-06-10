@@ -17,7 +17,7 @@
 - name: "copy backend file"
   become: true
   copy:
-    src: /root/project/backend.tar.gz
+    src: /root/project/backend.tar
     dest: /root
     force: no
 - name: "install package dependencies"
